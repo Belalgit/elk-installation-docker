@@ -37,10 +37,10 @@ Kibana Dashboard: http://<EC2_PUBLIC_IP>:5601
 
 
 # Nginx Configuration:
-sudo vi /etc/nginx/sites-available/elk.jatritech.com 
+sudo vi /etc/nginx/sites-available/example.com 
 —-----------------------
 server {
-    server_name elk.jatritech.com;
+    server_name example.com;
 
     location / {
         proxy_pass http://localhost:5601;  # Replace with the port your frontend container is exposing
