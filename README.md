@@ -36,7 +36,7 @@ Once running:
 Kibana Dashboard: http://<EC2_PUBLIC_IP>:5601
 
 
-# Nginx Configuration:
+# Nginx Configuration For Domain Integration; Domain: example.com:
 sudo vi /etc/nginx/sites-available/example.com 
 —-----------------------
 server {
