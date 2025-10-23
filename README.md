@@ -57,6 +57,24 @@ server {
 ------------------------
 
 
+## 🔐 Port Mapping
+
+| # | Rule ID | Type | Protocol | Port Range | Source | Description |
+|---|----------|------|-----------|-------------|---------|--------------|
+| 1 | `sgr-00` | HTTP | TCP | **80** | `0.0.0.0/0` | Allow HTTP |
+| 2 | `sgr-0e` | HTTPS | TCP | **443** | `0.0.0.0/0` | Allow HTTPS |
+| 3 | `sgr-0e` | SSH | TCP | **22** | `0.0.0.0/0` | Allow SSH from Anywhere *(Admin)* |
+| 4 | `sgr-0e` | Custom TCP | TCP | **5044** | `0.0.0.0/0` | Allow for Logstash |
+| 5 | `sgr-08` | Custom TCP | TCP | **5601** | `0.0.0.0/0` | Allow for Kibana |
+| 6 | `sgr-0d` | Custom TCP | TCP | **9200** | `10.10.0.0/16` | Allow for VPC (Elasticsearch) |
+
+---
+
+> 💡 **Tip:**  
+> - Expose ports `5044`, `5601`, and `9200` only to trusted networks or security groups.  
+> - For production, restrict access to `5601` (Kibana) using VPN, Bastion, or private IPs.
+
+
 **🧠 Notes**
 Designed for ARM64/AMD64 EC2 instances
 Tested with Filebeat, Metricbeat, and Suricata agents
