@@ -21,9 +21,11 @@ A **lightweight, secure** Elasticsearch + Logstash + Kibana setup using **Docker
 git clone https://github.com/InfraVsionary/ELK-essentials-.git
 
 # Enter the project directory
-cd ELK-essentials-
+sudo mv ELK-essentials-/ /var/www/elk.jatritech.com
+cd /var/www/elk.jatritech.com/
 
 # Prepare host dependencies (Docker, volumes, sysctl tuning)
+sudo apt install make 
 make host-bootstrap
 
 # Start the ELK stack
