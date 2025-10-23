@@ -1,15 +1,59 @@
-**ELK Stack**
+# 🧩 ELK Stack
 
-A lightweight, secure Elasticsearch + Logstash + Kibana setup using Docker Compose.
-Optimized for small EC2 instances and remote Filebeat/Metricbeat/Suricata agents.
+A **lightweight, secure** Elasticsearch + Logstash + Kibana setup using **Docker Compose** — optimized for small EC2 instances and remote agents (Filebeat, Metricbeat, Suricata).
 
-What’s Inside
-Elasticsearch → data store (internal port 9200)
-Logstash → receives logs from remote Filebeat agents (port 5044)
-Kibana → web UI for visualization (port 5601)
-Quick Start
+---
+
+## 🚀 What’s Inside
+
+| Component       | Role | Default Port |
+|-----------------|------|--------------|
+| **Elasticsearch** | Central data store | `9200` |
+| **Logstash**      | Receives logs from remote Filebeat agents | `5044` |
+| **Kibana**        | Web UI for visualization | `5601` |
+
+---
+
+## ⚡ Quick Start
+
+```bash
+# Clone the repository
 git clone https://github.com/InfraVsionary/ELK-essentials-.git
+
+# Enter the project directory
 cd ELK-essentials-
+
+# Prepare host dependencies (Docker, volumes, sysctl tuning)
 make host-bootstrap
+
+# Start the ELK stack
 make up
-- Kibana → [http://<EC2_PUBLIC_IP>:5601]
+
+
+Once running:
+Kibana Dashboard: http://<EC2_PUBLIC_IP>:5601
+
+
+**🧠 Notes**
+Designed for ARM64/AMD64 EC2 instances
+Tested with Filebeat, Metricbeat, and Suricata agents
+Includes sane defaults for memory, ILM, and pipeline management
+Production-ready security (credentials + network isolation)
+
+**🛠️ Optional Integrations**
+Filebeat → /var/log/nginx, /var/log/syslog
+Metricbeat → host metrics
+Suricata → network IDS logs
+
+📂 Directory Structure
+ELK-essentials-/
+├── docker-compose.yml
+├── stack/
+│   ├── elasticsearch/
+│   ├── logstash/
+│   └── kibana/
+├── scripts/
+│   ├── host-bootstrap.sh
+│   └── cleanup.sh
+└── docs/
+    └── operations.md
