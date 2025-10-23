@@ -36,6 +36,27 @@ Once running:
 Kibana Dashboard: http://<EC2_PUBLIC_IP>:5601
 
 
+# Nginx Configuration:
+sudo vi /etc/nginx/sites-available/elk.jatritech.com 
+—-----------------------
+server {
+    server_name elk.jatritech.com;
+
+    location / {
+        proxy_pass http://localhost:5601;  # Replace with the port your frontend container is exposing
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    error_log /var/log/nginx/elk_error.log;
+    access_log /var/log/nginx/elk_access.log;
+
+}
+------------------------
+
+
 **🧠 Notes**
 Designed for ARM64/AMD64 EC2 instances
 Tested with Filebeat, Metricbeat, and Suricata agents
