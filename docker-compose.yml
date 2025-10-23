@@ -1,0 +1,98 @@
+version: "3.8"
+
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.17.0
+    container_name: elasticsearch
+    environment:
+      - node.name=elasticsearch
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=true
+      - xpack.ml.enabled=false
+      - xpack.monitoring.collection.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - ELASTIC_PASSWORD=changeme-es
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+       - "9200:9200" # optional, restrict with firewall if remote access not needed
+       - "9300:9300"
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    networks:
+      - elk
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS -u elastic:changeme-es http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=5s >/dev/null || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 40
+
+  es-init:
+    image: curlimages/curl:8.8.0
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    command: >
+      sh -c '
+        echo "Waiting for Elasticsearch...";
+        until curl -s -u elastic:changeme-es http://elasticsearch:9200 >/dev/null; do sleep 2; done;
+        echo "Setting kibana_system password...";
+        curl -s -u elastic:changeme-es \
+          -H "Content-Type: application/json" \
+          -X POST http://elasticsearch:9200/_security/user/kibana_system/_password \
+          -d "{\"password\":\"changeme-kibana\"}" && echo " done.";
+      '
+    networks:
+      - elk
+    restart: "no"
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.17.0
+    container_name: kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=kibana_system
+      - ELASTICSEARCH_PASSWORD=changeme-kibana
+      - TELEMETRY_ENABLED=false
+      - DATA_SEARCH_ES_QUERY_ALLOWPARTIALSEARCHRESULTS=true
+      - XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    ports:
+      - "5601:5601"
+    depends_on:
+      es-init:
+        condition: service_completed_successfully
+    networks:
+      - elk
+    restart: unless-stopped
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.17.0
+    container_name: logstash
+    environment:
+      - LS_JAVA_OPTS=-Xms256m -Xmx256m
+      - ELASTIC_USER=elastic
+      - ELASTIC_PASSWORD=changeme-es
+    volumes:
+      - ./stack/logstash/config/logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
+      - ./stack/logstash/config/jvm.options:/usr/share/logstash/config/jvm.options:ro
+      - ./stack/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+    ports:
+      - "5044:5044" # for remote Filebeats
+    networks:
+      - elk
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  elasticsearch-data:
+
+networks:
+  elk:
+    driver: bridge
+
