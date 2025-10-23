@@ -1,4 +1,5 @@
 **ELK Stack**
+
 A lightweight, secure Elasticsearch + Logstash + Kibana setup using Docker Compose.
 Optimized for small EC2 instances and remote Filebeat/Metricbeat/Suricata agents.
 
