@@ -69,7 +69,7 @@ Metricbeat → host metrics
 Suricata → network IDS logs
 
 📂 Directory Structure
-ELK-essentials-/
+elk-installation-docker/
 ├── docker-compose.yml
 ├── stack/
 │   ├── elasticsearch/
