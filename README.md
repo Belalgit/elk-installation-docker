@@ -57,7 +57,7 @@ server {
 ------------------------
 
 
-## 🔐 Port Mapping
+## 🔐 Security Group Port Mapping
 
 | # | Rule ID | Type | Protocol | Port Range | Source | Description |
 |---|----------|------|-----------|-------------|---------|--------------|
